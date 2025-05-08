@@ -16,6 +16,13 @@ import (
 //     "role": "admin"
 // }
 
+type Handler struct {
+}
+
+func New() *Handler {
+	return &Handler{}
+}
+
 type Body struct {
 	Role string `json:"role"`
 }
@@ -29,7 +36,7 @@ type ErrorResponse struct {
 	Message string `json:"message,omitempty"`
 }
 
-func Handle(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
 	// валидация
 
 	if r.Method != "POST" {
