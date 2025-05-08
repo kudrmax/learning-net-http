@@ -1,7 +1,10 @@
 package main
 
 import (
+	"errors"
+	"log"
 	"net/http"
+	"time"
 
 	"my/perfectPetProjectHttp/internal/handlers/http/middleware"
 	"my/perfectPetProjectHttp/internal/handlers/http/root"
@@ -29,7 +32,16 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /api/users/{user_id}/roles", mw(handler.Handle))
 
-	if err := http.ListenAndServe(":8080", mux); err != nil {
-		panic(err)
+	server := &http.Server{
+		Addr:         ":8080",
+		Handler:      mux,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  30 * time.Second,
+	}
+
+	log.Println("Starting server on :8080")
+	if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		log.Fatalf("Could not start server: %v\n", err)
 	}
 }
