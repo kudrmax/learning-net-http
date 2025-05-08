@@ -7,8 +7,22 @@ import (
 	"my/perfectPetProjectHttp/internal/handlers/http/root"
 )
 
+var example = `
+curl -X POST "http://localhost:8080/api/users/123/roles?expires_in=7d" \
+     -H "Content-Type: application/json" \
+     -H "X-Request-ID: abc123" \
+     -H "Authorization: ansbdjahsbdkhasj" \
+     -d '{"role": "admin"}'
+`
+
 func main() {
-	mw := middleware.Chain(middleware.LoggingMiddleware, middleware.RequireJSON, middleware.RecoverMiddleware)
+	mw := middleware.Chain(
+		middleware.LoggingMiddleware,
+		middleware.AuthMiddleware,
+		middleware.LogUserIdMiddleware,
+		middleware.RequireJSON,
+		middleware.RecoverMiddleware,
+	)
 
 	handler := root.New()
 
